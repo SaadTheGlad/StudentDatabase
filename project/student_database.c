@@ -33,5 +33,7 @@ int main(){
         StudentDebug(ListGet(&students, i));
     }
 
+    StudentsDestroy(&students);
+
     return 0;
 }
