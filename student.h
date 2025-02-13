@@ -14,6 +14,5 @@ void StudentDestroy(Student *student);
 void StudentDebug(const Student* student);
 
 Student StudentPromptAndCreate();
-int StudentPromptAndCreateP(Student *student);
 
 void StudentsDestroy(List* students);

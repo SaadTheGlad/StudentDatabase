@@ -4,6 +4,10 @@
     },
     "files.exclude": {
         "**/*.exe": true
+        "**/*.md": true
+        "**/*.gitattributes": true
+        "**/*.gitignore": true
+        "LICENSE": true
         "**/*backup" : true
     },
     "C_Cpp.errorSquiggles": "disabled"

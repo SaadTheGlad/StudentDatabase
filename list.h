@@ -26,7 +26,6 @@ bool ListRemoveAt(List* list, int i);
      \
 }
 
-
 void* ListGet(const List* list, int i);
 
 void ListDestroy(List* list);

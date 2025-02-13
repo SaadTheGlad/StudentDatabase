@@ -5,8 +5,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-int strcmpM(const char *string1, const char *string2)
-{
+int strcmpM(const char *string1, const char *string2){
     int i = 0;
 
     //We iterate over every character and stop when we hit the null terminator
@@ -48,8 +47,7 @@ char* mystrdup(char* str){
     return duplicatedString;
 }
 
-char* getline()
-{
+char* getline(){
     int currentMax = 12;
     char *string = malloc(currentMax * sizeof(char));
     int length = 0;
@@ -144,8 +142,7 @@ size_t improved_getline(char** linep, size_t* capacity){
 }
 
 
-int WordCount(char* line)
-{
+int WordCount(char* line){
     int numWords = 0;
 
     for(int letterIterator = 0; line[letterIterator] != 0; letterIterator++)
@@ -162,8 +159,7 @@ int WordCount(char* line)
     return numWords;
 }
 
-int myStrLen(const char *string)
-{
+int myStrLen(const char *string){
     int length = 0;
     char c;
 
@@ -175,8 +171,7 @@ int myStrLen(const char *string)
     return length - 1;
 }
 
-double Factorial(int n)
-{
+double Factorial(int n){
     double total = 1;
     for(int i = 0; i < n; ++i)
     {

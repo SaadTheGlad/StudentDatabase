@@ -24,7 +24,6 @@ void* ListGet(const List* list, int i){
 }
 
 bool ListRemoveAt(List* list, int index){
-
     if(ListGet(list, index) == NULL){
         return false;
     }
@@ -45,7 +44,7 @@ bool ListAdd(List* list, void* element){
 
     if(list->count > list->capacity - 1){
         list->capacity *= 2;
-        list->elements = realloc(list->elements, list->capacity * sizeof(list->elementSize));
+        list->elements = realloc(list->elements, list->capacity * list->elementSize);
         if(list->elements == NULL) return false;
     }
 
