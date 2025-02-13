@@ -9,6 +9,11 @@ typedef struct {
     List subjects;
 } Student;
 
+typedef struct DataBase{
+    List students;
+    List IDs;
+} DataBase;
+
 typedef enum {
     ANALYSIS_1,
     ALGEBRA_1,

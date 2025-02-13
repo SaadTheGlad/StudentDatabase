@@ -8,10 +8,17 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+DataBase DataBaseCreate(){
+    DataBase database;
+    database.students = ListCreate(sizeof(Student));
+    database.IDs = ListCreate(sizeof(int));
+    return database;
+}
+
 int main(){
     puts("Starting program...");
 
-    List students = ListCreate(sizeof(Student));
+    DataBase database = DataBaseCreate();
 
     int studentNum;
     do{
@@ -23,17 +30,17 @@ int main(){
     puts("#####################################");
 
     for(int i = 0; i < studentNum; ++i){
-        Student student = StudentPromptAndCreate();
-        ListAdd(&students, &student);
+        Student student = StudentPromptAndCreate(&database.IDs);
+        ListAdd(&database.students, &student);
     }
     
     puts("#####################################");
     puts("***Debugging Students***");
-    for(int i = 0; i < students.count; i++){
-        StudentDebug(ListGet(&students, i));
+    for(int i = 0; i < database.students.count; ++i){
+        StudentDebug(ListGet(&database.students, i));
     }
 
-    StudentsDestroy(&students);
+    StudentsDestroy(&database.students);
 
     return 0;
 }

@@ -44,3 +44,17 @@ void ListDestroy(List* list);
         \
     } \
 } 
+
+#define ListFind(list, element, type, elementVal){ \
+    bool hasFound = false; \
+    for(int i = 0; i < (list)->count; ++i){ \
+        element = ListGet((list), i); \
+        type elementToTest = *(type*)(element); \
+        if(elementToTest == elementVal){ \
+            hasFound = true; \
+            break; \
+        } \
+    } \
+    if(!hasFound) element = NULL; \
+}
+

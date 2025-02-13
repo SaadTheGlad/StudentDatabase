@@ -43,7 +43,7 @@ void StudentDebug(const Student* student){
     puts("");
 }
 
-Student StudentPromptAndCreate(){
+Student StudentPromptAndCreate(List* IDList){
     List subjects = ListCreate(sizeof(Subject));
     Student student;
     student.subjects = subjects;
@@ -55,9 +55,19 @@ Student StudentPromptAndCreate(){
 
     do{
         printf("Enter the ID (must be %d digits long): \n", ID_LENGTH);
+
         size_t len;
         student.ID = GetInt(&len);
+
+        void* element = NULL;
+        ListFind(IDList, element, int, student.ID);
+        if(element != NULL){
+            puts("ID already exists.");
+            continue;
+        }
+
         if(len == ID_LENGTH){
+            ListAdd(IDList, &student.ID);
             break;
         }        
     }while(true);

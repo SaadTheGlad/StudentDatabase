@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
+#include "list.h"
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -140,7 +141,6 @@ size_t improved_getline(char** linep, size_t* capacity){
     return length;
 
 }
-
 
 int WordCount(char* line){
     int numWords = 0;

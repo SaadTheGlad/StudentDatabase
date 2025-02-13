@@ -13,6 +13,6 @@ void StudentDestroy(Student *student);
 
 void StudentDebug(const Student* student);
 
-Student StudentPromptAndCreate();
+Student StudentPromptAndCreate(List* IDList);
 
 void StudentsDestroy(List* students);
