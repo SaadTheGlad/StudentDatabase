@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "heap.h": "c"
+    },
+    "files.exclude": {
+        "**/*.exe": true
+        "**/*backup" : true
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
