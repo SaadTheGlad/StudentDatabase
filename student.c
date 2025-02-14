@@ -25,8 +25,33 @@ void StudentDestroy(Student* student){
     ListDestroy(&student->subjects);
 }
 
-void StudentDebug(const Student* student){
-    puts("******************************");
+bool StudentsList(const List* list){
+    if(list->count == 0){
+        return false;
+    }
+
+    for(int i = 0; i < list->count; ++i){
+        Student student = *(Student*)ListGet(list, i);
+        printf("%d) ID: %d. Name: %s %s.\n", i + 1, student.ID, student.firstName, student.lastName);
+    }
+
+    return true;
+}
+
+Student* StudentGet(List* students, int ID, int* index){
+    for(int i = 0; i < students->count; ++i){
+        Student *student = (Student*)ListGet(students, i);
+        if(student->ID == ID){
+           *index = i; 
+           return student;
+        }
+    }
+
+    return NULL;
+}
+
+bool StudentDebug(const Student* student){
+
     printf(">Student ID: %d\n>First name: %s\n>Last name: %s\n>Overall grade: %d\n",
            student->ID, student->firstName, student->lastName, student->overallGrade);
 
@@ -40,7 +65,6 @@ void StudentDebug(const Student* student){
         Subject subject = *(Subject*)subjectP;
         printf("->%s\n", GetSubjectName(subject));
     }
-    puts("");
 }
 
 Student StudentPromptAndCreate(List* IDList){

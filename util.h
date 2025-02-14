@@ -17,7 +17,7 @@ char getCharDeluxe();
 
 int WordCount(char* line);
 
-int myStrLen(const char *string);
+int myStrLen(const char* string);
 
 double Factorial(int n);
 

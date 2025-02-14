@@ -6,6 +6,6 @@
 
 const char* GetSubjectName(Subject subject);
 
-int SubjectAdd(Student *student, Subject* subject);
+int SubjectAdd(Student* student, Subject* subject);
 
 void SubjectsPrompt();
