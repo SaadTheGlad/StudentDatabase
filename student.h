@@ -15,7 +15,7 @@ Student* StudentGet(List* students, int ID, int* index);
 
 bool StudentsList(const List* list);
 
-bool StudentEdit(Student* student, EditMode editMode);
+bool StudentEditGrade(Student* student, int newGrade);
 
 bool StudentDebug(const Student* student);
 

@@ -8,26 +8,6 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-// int studentNum;
-// do{
-//     puts("How many students do you want to register?");
-//     size_t len;
-//     studentNum = GetInt(&len);
-//     if((studentNum > 0) && len != 0) break;
-// }while(true);
-// puts("#####################################");
-// for(int i = 0; i < studentNum; ++i){
-//     Student student = StudentPromptAndCreate(&database.IDs);
-//     ListAdd(&database.students, &student);
-// }
-
-// puts("#####################################");
-// puts("***Debugging Students***");
-// for(int i = 0; i < database.students.count; ++i){
-//     StudentDebug(ListGet(&database.students, i));
-// }
-// StudentsDestroy(&database.students);
-
 DataBase DataBaseCreate(){
     DataBase database;
     database.students = ListCreate(sizeof(Student));
@@ -53,6 +33,17 @@ int CommandToInt(const char* command){
     }
 }
 
+int GetID(){
+    int enteredID;
+    do{
+        puts("Enter the student's ID: ");
+        size_t len;
+        enteredID = GetInt(&len);
+        if((enteredID > 0) && len == 3) break;
+    }while(true);
+    return enteredID;
+}
+
 int main(){
     puts("Starting program...");
 
@@ -61,6 +52,7 @@ int main(){
     char* command = NULL;
     size_t capacity;
     int enteredID = 0;
+    int studentIndex = -1;
     puts("Please enter a command: ");
     puts("->list");
     puts("->get");
@@ -76,22 +68,17 @@ int main(){
 
         switch (choice){
         case 0:
+            //Listing students
             puts("");
             if(!StudentsList(&database.students)){
                 puts("No students in database.");
             }
             break;
         case 1:
+            //Getting student
             puts("");
-            enteredID = 0;
-            do{
-                puts("Enter the student's ID: ");
-                size_t len;
-                enteredID = GetInt(&len);
-                if((enteredID > 0) && len == 3) break;
-            }while(true);    
-            int gottenIndex = -1;
-            Student *gottenStudent = StudentGet(&database.students, enteredID, &gottenIndex);
+            enteredID = GetID();    
+            Student *gottenStudent = StudentGet(&database.students, enteredID, &studentIndex);
             if(!gottenStudent){
                 printf("Student with ID %d does not exist.\n", enteredID);
             }else{
@@ -100,20 +87,16 @@ int main(){
             }
             break;
         case 2:
+            //Debugging student
             puts("");
             Student addedStudent = StudentPromptAndCreate(&database.IDs);
             ListAdd(&database.students, &addedStudent);
             break;
         case 3:
+            //Removing student
             puts("");
-            do{
-                puts("Enter the student's ID: ");
-                size_t len;
-                enteredID = GetInt(&len);
-                if((enteredID > 0) && len == 3) break;
-            }while(true);
-            int removedIndex = -1;    
-            Student* removedStudent = StudentGet(&database.students, enteredID, &removedIndex);
+            enteredID = GetID(); 
+            Student* removedStudent = StudentGet(&database.students, enteredID, &studentIndex);
             if(!removedStudent){
                 printf("Student with ID %d does not exist.\n", enteredID);
             }else{
@@ -124,7 +107,7 @@ int main(){
                     puts("Are you sure? (Y/N)");
                     len = improved_getline(&line, &capacity);
                     if (len == 1 && line[0] == 'Y'){
-                        ListRemoveAt(&database.students, removedIndex);   
+                        ListRemoveAt(&database.students, studentIndex);   
                         printf("Student with ID %d has been removed.\n", removedStudent->ID);
                         break;
                     }else if(len == 1 && line[0] == 'N'){
@@ -136,25 +119,165 @@ int main(){
             }
             break;
         case 4:
+            //Editing student
             puts("");
-            enteredID = 0;
-            do{
-                puts("Enter the student's ID: ");
-                size_t len;
-                enteredID = GetInt(&len);
-                if((enteredID > 0) && len == 3) break;
-            }while(true);    
-                int editedIndex = -1;
-                Student *editedStudent = StudentGet(&database.students, enteredID, &editedIndex);
+            enteredID = GetID(); 
+            Student *editedStudent = StudentGet(&database.students, enteredID, &studentIndex);
             if(!editedStudent){
                 printf("Student with ID %d does not exist.\n", enteredID);
             }else{
-                puts("");
-                puts("Set grade to 100!");
-                StudentEdit(editedStudent, OVERALL_GRADE);
+                puts("What would you like to edit?");
+                puts("Enter 1 for editing the overall grade");
+                puts("Enter 2 for editing the subjects");
+                int choiceEdit;
+                while(true){
+                    size_t len;
+                    choiceEdit = GetInt(&len);
+                    if((choiceEdit > 0) && (choiceEdit < 3)) break;
+                    else puts("Please enter a valid number.");     
+                }
+
+                switch(choiceEdit){
+                    case 1:
+                    //editing
+                    puts("");
+                    puts("Enter new grade (must be between 0 and 20): ");
+                    int newGrade;
+                    while(true){
+                        size_t len;
+                        newGrade = GetInt(&len);
+                        if((newGrade >= 0) && (newGrade <= 20)) break;
+                        else puts("Please enter a valid number.");     
+                    }
+                    printf("Set grade to %d.\n", newGrade);
+                    StudentEditGrade(editedStudent, newGrade);
+                    break;
+                    case 2:
+                    puts("");
+                    puts("What would you like to edit?");
+                    puts("Enter 1 for adding a subject");
+                    puts("Enter 2 for removing a subject");
+                    int choiceEditGrade;
+                    while(true){
+                        size_t len;
+                        choiceEditGrade = GetInt(&len);
+                        if((choiceEditGrade > 0) && (choiceEditGrade < 3)) break;
+                        else puts("Please enter a valid number.");     
+                    }
+
+                    switch(choiceEditGrade){
+                        case 1:
+                        //adding subject
+                        SubjectsPrompt();
+                        printf("%s %s's subjects: [", editedStudent->firstName, editedStudent->lastName);
+                        for (int i = 0; i < editedStudent->subjects.count; ++i) {
+                            const char* pointerName = GetSubjectName(*(int*)ListGet(&(editedStudent->subjects), i));
+                            printf("%s%s", pointerName, 
+                                i == editedStudent->subjects.count - 1 ? "" : ", ");
+                               
+                        }
+                        puts("]");
+                
+                        char* line = NULL;
+                        int choiceEditGradeAdding;
+                        do{
+                            size_t len = improved_getline(&line, &capacity);
+                            if (len > 0) {
+                                int items_read = sscanf(line, "%d", &choiceEditGradeAdding);
+                    
+                                if (items_read > 0) {
+                                    if (choiceEditGradeAdding >= NUMBER_OF_SUBJECTS || choiceEditGradeAdding < 0) {
+                    
+                                        puts("Subject does not exist.");
+                                        continue;
+                                    }
+                                    
+                                    Subject subjectToAdd = choiceEditGradeAdding - 1;
+                                    if(SubjectAdd(editedStudent, &subjectToAdd) == 0)
+                                    {
+                                        puts("Subject already added");
+                                        continue;
+                                    }else{
+                                        printf("Added %s.\n", GetSubjectName(choiceEditGradeAdding - 1));
+                                        continue;
+                                    }
+                                    
+                                } else {
+                                    if (line[0] == 'n' || line[0] == 'N') {
+                                        break;
+                                    }
+                                    else{
+                                        puts("Please enter a valid number");
+                                    }
+                                }
+
+                            }else puts("Please enter a valid number");
+                        }while(true);
+                        break;
+                        
+                        case 2:
+                        SubjectsPrompt();
+                        //removing subject
+                        printf("%s %s's subjects: [", editedStudent->firstName, editedStudent->lastName);
+                        for (int i = 0; i < editedStudent->subjects.count; ++i) {
+                            const char* pointerName = GetSubjectName(*(int*)ListGet(&(editedStudent->subjects), i));
+                            printf("%s%s", pointerName, 
+                                i == editedStudent->subjects.count - 1 ? "" : ", ");
+                               
+                        }
+                        puts("]");
+                
+                        char* line2 = NULL;
+                        int choiceEditGradeRemoving;
+                        do{
+                            size_t len = improved_getline(&line2, &capacity);
+                            if (len > 0) {
+                                int items_read = sscanf(line2, "%d", &choiceEditGradeRemoving);
+                                Subject subjectToRemove = choiceEditGradeRemoving - 1;
+                    
+                                if (items_read > 0) {
+                                    void* subject = NULL;
+                                    ListFind(&editedStudent->subjects, subject, Subject, subjectToRemove);
+
+                                    if (subjectToRemove >= NUMBER_OF_SUBJECTS || subjectToRemove < 0 || 
+                                        subject == NULL) {
+                    
+                                        puts("Subject does not exist.");
+                                        continue;
+                                    }
+                                    
+                                    ListRemove(&editedStudent->subjects, subjectToRemove, Subject);
+                                    printf("Removed %s.\n", GetSubjectName(choiceEditGradeRemoving - 1));
+                                    continue;
+
+                                } else {
+                                    if (line2[0] == 'n' || line2[0] == 'N') {
+                                        break;
+                                    }
+                                    else{
+                                        puts("Please enter a valid number");
+                                    }
+                                }
+
+                            }else puts("Please enter a valid number");
+                        }while(true);
+                        break;
+
+                        default:
+                        puts("ERROR");
+                        break;
+                    }
+    
+                    break;
+                    default:
+                    puts("ERROR");
+                    break;
+                }
+
             }
             break;
         case 5:
+            //Quitting
             puts("Quitting...");
             return 0;
         default:

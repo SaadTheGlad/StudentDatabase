@@ -132,15 +132,15 @@ Student StudentPromptAndCreate(List* IDList){
         int choice;
         if (len > 0) {
             int items_read = sscanf(line, "%d", &choice);
+            Subject subjectToAdd = choice - 1;
 
             if (items_read > 0) {
-                if (choice > NUMBER_OF_SUBJECTS || choice < 0) {
+                if (subjectToAdd >= NUMBER_OF_SUBJECTS || subjectToAdd < 0) {
 
                     puts("Subject does not exist.");
                     continue;
                 }
                 
-                Subject subjectToAdd = choice - 1;
                 if(SubjectAdd(&student, &subjectToAdd) == 0)
                 {
                     puts("Subject already added");
@@ -159,17 +159,13 @@ Student StudentPromptAndCreate(List* IDList){
     return student;
 }
 
-bool StudentEdit(Student* student, EditMode editMode){
-    if(!student){
-        return false;
-    }
+bool StudentEditGrade(Student* student, int newGrade){
+    if(!student) return false;
 
-    if(editMode == OVERALL_GRADE){
-        student->overallGrade = 100;
-        return true;
-    }else{
-        return false;
-    }
+    if(newGrade < 0 || newGrade > 20) return false;
+    
+    student->overallGrade = newGrade;
+    return true;
 }
 
 void StudentsDestroy(List* students) {

@@ -21,8 +21,3 @@ typedef enum {
     GAME_DESIGN,
     NUMBER_OF_SUBJECTS
 } Subject;
-
-typedef enum {
-    OVERALL_GRADE,
-    SUBJECTS
-} EditMode;
