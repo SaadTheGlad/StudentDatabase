@@ -159,6 +159,19 @@ Student StudentPromptAndCreate(List* IDList){
     return student;
 }
 
+bool StudentEdit(Student* student, EditMode editMode){
+    if(!student){
+        return false;
+    }
+
+    if(editMode == OVERALL_GRADE){
+        student->overallGrade = 100;
+        return true;
+    }else{
+        return false;
+    }
+}
+
 void StudentsDestroy(List* students) {
     for (int i = 0; i < students->count; ++i) {
         StudentDestroy(ListGet(students, i));

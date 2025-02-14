@@ -60,6 +60,7 @@ int main(){
 
     char* command = NULL;
     size_t capacity;
+    int enteredID = 0;
     puts("Please enter a command: ");
     puts("->list");
     puts("->get");
@@ -75,12 +76,14 @@ int main(){
 
         switch (choice){
         case 0:
+            puts("");
             if(!StudentsList(&database.students)){
                 puts("No students in database.");
             }
             break;
         case 1:
-            int enteredID = 0;
+            puts("");
+            enteredID = 0;
             do{
                 puts("Enter the student's ID: ");
                 size_t len;
@@ -90,7 +93,7 @@ int main(){
             int gottenIndex = -1;
             Student *gottenStudent = StudentGet(&database.students, enteredID, &gottenIndex);
             if(!gottenStudent){
-                printf("Student with ID %d does not exist.\n", gottenStudent);
+                printf("Student with ID %d does not exist.\n", enteredID);
             }else{
                 puts("");
                 StudentDebug(gottenStudent);
@@ -133,6 +136,23 @@ int main(){
             }
             break;
         case 4:
+            puts("");
+            enteredID = 0;
+            do{
+                puts("Enter the student's ID: ");
+                size_t len;
+                enteredID = GetInt(&len);
+                if((enteredID > 0) && len == 3) break;
+            }while(true);    
+                int editedIndex = -1;
+                Student *editedStudent = StudentGet(&database.students, enteredID, &editedIndex);
+            if(!editedStudent){
+                printf("Student with ID %d does not exist.\n", enteredID);
+            }else{
+                puts("");
+                puts("Set grade to 100!");
+                StudentEdit(editedStudent, OVERALL_GRADE);
+            }
             break;
         case 5:
             puts("Quitting...");
