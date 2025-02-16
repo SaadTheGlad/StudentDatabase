@@ -4,9 +4,10 @@
 #include "subject.h"
 #include "util.h"
 #include <string.h>
+#include "sorting.h"
 
 Student StudentCreate(int ID, const char* firstName, const char* lastName,
-    int overallGrade, const Subject* subjects, int subjectCount) {
+    float overallGrade, const Subject* subjects, int subjectCount) {
     Student student;
     student.ID = ID;
 
@@ -22,6 +23,7 @@ Student StudentCreate(int ID, const char* firstName, const char* lastName,
 void StudentDestroy(Student* student){
     free(student->firstName);
     free(student->lastName);
+    free(student->fullName);
     ListDestroy(&student->subjects);
 }
 
@@ -52,7 +54,7 @@ Student* StudentGet(List* students, int ID, int* index){
 
 bool StudentDebug(const Student* student){
 
-    printf(">Student ID: %d\n>First name: %s\n>Last name: %s\n>Overall grade: %d\n",
+    printf(">Student ID: %d\n>First name: %s\n>Last name: %s\n>Overall grade: %.2f\n",
            student->ID, student->firstName, student->lastName, student->overallGrade);
 
     printf(">Number of subjects: %d\n", student->subjects.count);
@@ -110,10 +112,16 @@ Student StudentPromptAndCreate(List* IDList){
 
     student.lastName = strdup(line);
 
+    int totalNameLen = strlen(student.firstName) + strlen(student.lastName);
+    student.fullName = malloc((totalNameLen + 1) * sizeof(char));
+    memcpy(student.fullName, student.firstName, strlen(student.firstName) * sizeof(char));
+    memcpy(student.fullName + strlen(student.firstName), student.lastName, strlen(student.lastName) * sizeof(char));
+    student.fullName[totalNameLen] = 0;
+
     do{
         puts("Enter the overall grade (between 0 and 20): ");
         size_t len;
-        student.overallGrade = GetInt(&len);
+        student.overallGrade = GetFloat(&len);
         if((student.overallGrade >= 0 && student.overallGrade <= 20) && len != 0) break;
     }while(true);
 
@@ -159,7 +167,7 @@ Student StudentPromptAndCreate(List* IDList){
     return student;
 }
 
-bool StudentEditGrade(Student* student, int newGrade){
+bool StudentEditGrade(Student* student, float newGrade){
     if(!student) return false;
 
     if(newGrade < 0 || newGrade > 20) return false;
@@ -174,4 +182,32 @@ void StudentsDestroy(List* students) {
     }
 }
 
+void StudentSortID(List* students, PredicateInt predicate){
+    for(int i = 0; i < (students)->count; ++i){ 
+        for(int j = i; j < (students)->count; ++j){ 
+            int a = *(int*)ListGet(students, i);
+            int b = *(int*)ListGet(students, j);
+            if(predicate(a, b)){ 
+                Student temp = *(Student*)ListGet(students, i);\
+                *(Student*)ListGet(students, i) = *(Student*)ListGet(students, j); 
+                *(Student*)ListGet(students, j) = temp; 
+            } 
+        } 
+    } 
+}
 
+void StudentSortAlphabetical(List* students, PredicateInt predicate){
+    for(int i = 0; i < (students)->count; ++i){ 
+        for(int j = i; j < (students)->count; ++j){ 
+            
+            Student a = *(Student*)ListGet(students, i);
+            Student b = *(Student*)ListGet(students, j);
+
+            if(predicate(strcmp(a.fullName, b.fullName), 0)){ 
+                Student temp = *(Student*)ListGet(students, i);\
+                *(Student*)ListGet(students, i) = *(Student*)ListGet(students, j); 
+                *(Student*)ListGet(students, j) = temp; 
+            } 
+        } 
+    } 
+}

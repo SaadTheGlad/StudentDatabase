@@ -7,6 +7,7 @@
 #include "student.h"
 #include <stdbool.h>
 #include <ctype.h>
+#include "sorting.h"
 
 DataBase DataBaseCreate(){
     DataBase database;
@@ -44,9 +45,17 @@ int GetID(){
     return enteredID;
 }
 
-int main(){
-    puts("Starting program...");
+bool SmallestToLargest(int a, int b){
+    if(a > b) return true;
+    else return false;
+}
 
+bool LargestToSmallest(int a, int b){
+    if(a < b) return true;
+    else return false;
+}
+
+int ThisShitsWayTooLongBro(){
     DataBase database = DataBaseCreate();
 
     char* command = NULL;
@@ -61,6 +70,42 @@ int main(){
     puts("->edit");
     puts("->quit");
 
+
+    Student saad = {
+        .ID = 200,
+        .firstName = "lina",
+        .lastName = "kebach",
+        .fullName = "linakebach",
+        .overallGrade = 15,
+        .subjects = ListCreate(sizeof(Subject))
+    };
+
+    Student lina = {
+        .ID = 180,
+        .firstName = "saad",
+        .lastName = "kebach",
+        .fullName = "saadkebach",
+        .overallGrade = 20,
+        .subjects = ListCreate(sizeof(Subject))
+    };
+
+    Student den = {
+        .ID = 190,
+        .firstName = "den",
+        .lastName = "lille",
+        .fullName = "denlille",
+        .overallGrade = 20,
+        .subjects = ListCreate(sizeof(Subject))
+    };
+
+    ListAdd(&database.students, &saad);
+    ListAdd(&database.IDs, &saad.ID);
+    ListAdd(&database.students, &lina);
+    ListAdd(&database.IDs, &lina.ID);
+    ListAdd(&database.students, &den);
+    ListAdd(&database.IDs, &den.ID);
+
+
     do{
         printf("\n> ");
         size_t len = improved_getline(&command, &capacity);
@@ -70,8 +115,23 @@ int main(){
         case 0:
             //Listing students
             puts("");
+            puts("Students: ");
+            StudentSortID(&database.students, SmallestToLargest);
             if(!StudentsList(&database.students)){
                 puts("No students in database.");
+            }
+            puts("Sort alphabetically? (Y/N)");
+            char* line = NULL;
+            len = improved_getline(&line, &capacity);
+            if (len == 1 && (line[0] == 'Y' || line[0] == 'y')){
+                puts("Students: ");
+                StudentSortAlphabetical(&database.students, SmallestToLargest);
+                StudentsList(&database.students);
+                break;
+            }else if(len == 1 && (line[0] == 'N' || line[0] == 'n')){
+                break;
+            }else{
+                continue;
             }
             break;
         case 1:
@@ -106,11 +166,12 @@ int main(){
                 do {
                     puts("Are you sure? (Y/N)");
                     len = improved_getline(&line, &capacity);
-                    if (len == 1 && line[0] == 'Y'){
+                    if (len == 1 && (line[0] == 'Y' || line[0] == 'y')){
                         ListRemoveAt(&database.students, studentIndex);   
+                        ListRemove(&database.IDs, removedStudent->ID, int);
                         printf("Student with ID %d has been removed.\n", removedStudent->ID);
                         break;
-                    }else if(len == 1 && line[0] == 'N'){
+                    }else if(len == 1 && (line[0] == 'N' || line[0] == 'n')){
                         break;
                     }else{
                         continue;
@@ -142,14 +203,14 @@ int main(){
                     //editing
                     puts("");
                     puts("Enter new grade (must be between 0 and 20): ");
-                    int newGrade;
+                    float newGrade;
                     while(true){
                         size_t len;
-                        newGrade = GetInt(&len);
+                        newGrade = GetFloat(&len);
                         if((newGrade >= 0) && (newGrade <= 20)) break;
                         else puts("Please enter a valid number.");     
                     }
-                    printf("Set grade to %d.\n", newGrade);
+                    printf("Set grade to %.2f.\n", newGrade);
                     StudentEditGrade(editedStudent, newGrade);
                     break;
                     case 2:
@@ -168,31 +229,31 @@ int main(){
                     switch(choiceEditGrade){
                         case 1:
                         //adding subject
-                        SubjectsPrompt();
-                        printf("%s %s's subjects: [", editedStudent->firstName, editedStudent->lastName);
-                        for (int i = 0; i < editedStudent->subjects.count; ++i) {
-                            const char* pointerName = GetSubjectName(*(int*)ListGet(&(editedStudent->subjects), i));
-                            printf("%s%s", pointerName, 
-                                i == editedStudent->subjects.count - 1 ? "" : ", ");
-                               
-                        }
-                        puts("]");
-                
+                        SubjectsPrompt();       
                         char* line = NULL;
                         int choiceEditGradeAdding;
                         do{
+                            printf("%s %s's subjects: [", editedStudent->firstName, editedStudent->lastName);
+                            for (int i = 0; i < editedStudent->subjects.count; ++i) {
+                                const char* pointerName = GetSubjectName(*(int*)ListGet(&(editedStudent->subjects), i));
+                                printf("%s%s", pointerName, 
+                                    i == editedStudent->subjects.count - 1 ? "" : ", ");
+                                   
+                            }
+                            puts("]");
+
                             size_t len = improved_getline(&line, &capacity);
                             if (len > 0) {
                                 int items_read = sscanf(line, "%d", &choiceEditGradeAdding);
                     
                                 if (items_read > 0) {
-                                    if (choiceEditGradeAdding >= NUMBER_OF_SUBJECTS || choiceEditGradeAdding < 0) {
+                                    Subject subjectToAdd = choiceEditGradeAdding - 1;
+                                    if (subjectToAdd >= NUMBER_OF_SUBJECTS || subjectToAdd < 0) {
                     
                                         puts("Subject does not exist.");
                                         continue;
                                     }
                                     
-                                    Subject subjectToAdd = choiceEditGradeAdding - 1;
                                     if(SubjectAdd(editedStudent, &subjectToAdd) == 0)
                                     {
                                         puts("Subject already added");
@@ -218,18 +279,19 @@ int main(){
                         case 2:
                         SubjectsPrompt();
                         //removing subject
-                        printf("%s %s's subjects: [", editedStudent->firstName, editedStudent->lastName);
-                        for (int i = 0; i < editedStudent->subjects.count; ++i) {
-                            const char* pointerName = GetSubjectName(*(int*)ListGet(&(editedStudent->subjects), i));
-                            printf("%s%s", pointerName, 
-                                i == editedStudent->subjects.count - 1 ? "" : ", ");
-                               
-                        }
-                        puts("]");
-                
+
                         char* line2 = NULL;
                         int choiceEditGradeRemoving;
                         do{
+                            printf("%s %s's subjects: [", editedStudent->firstName, editedStudent->lastName);
+                            for (int i = 0; i < editedStudent->subjects.count; ++i) {
+                                const char* pointerName = GetSubjectName(*(int*)ListGet(&(editedStudent->subjects), i));
+                                printf("%s%s", pointerName, 
+                                    i == editedStudent->subjects.count - 1 ? "" : ", ");
+                                   
+                            }
+                            puts("]");
+
                             size_t len = improved_getline(&line2, &capacity);
                             if (len > 0) {
                                 int items_read = sscanf(line2, "%d", &choiceEditGradeRemoving);
@@ -286,5 +348,22 @@ int main(){
         }
     }while(true);
 
-    return 1;
+}
+
+int main(){
+    puts("Starting program...");
+    return ThisShitsWayTooLongBro();
+
+
+    // int T[12] = {3,4,5,1,7,8,6,5,9,8,12,9};
+    
+    // SortSelection(T, 12);
+
+    // printf("[");
+    // for(int i = 0; i < 12; ++i){
+    //     printf("%d%s", T[i], i == 11 ? "]\n" : ",");
+    // }
+
+    return 0;
+
 }

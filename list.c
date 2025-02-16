@@ -53,6 +53,8 @@ bool ListAdd(List* list, void* element){
     return true;
 }
 
+typedef bool (*Predicate)(void*, void*);
+
 void ListDestroy(List* list){
     free(list->elements);
 }

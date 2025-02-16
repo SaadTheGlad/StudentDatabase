@@ -5,7 +5,8 @@ typedef struct {
     int ID;
     char* firstName;
     char* lastName;
-    int overallGrade;
+    char* fullName;
+    float overallGrade;
     List subjects;
 } Student;
 
@@ -21,3 +22,5 @@ typedef enum {
     GAME_DESIGN,
     NUMBER_OF_SUBJECTS
 } Subject;
+
+

@@ -110,9 +110,29 @@ int GetInt(size_t* len){
             }
         }
     } while (true);
-
-    
 }
+
+float GetFloat(size_t* len){
+
+    char* line = NULL;
+    size_t capacity = 16;
+    float num;
+
+    do {
+        *len = improved_getline(&line, &capacity);
+        if (line) {
+            int items_read = sscanf(line, "%f", &num);
+            if (items_read > 0) {
+                return num;
+            }
+            else{
+                *len = 0;
+                return -1;
+            }
+        }
+    } while (true);
+}
+
 
 size_t improved_getline(char** linep, size_t* capacity){
 

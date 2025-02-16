@@ -58,5 +58,16 @@ void ListDestroy(List* list);
     if(!hasFound) element = NULL; \
 }
 
+#define ListSort(list, predicate, type){ \
+    for(int i = 0; i < (list)->count; ++i){ \
+        for(int j = i; j < (list)->count; ++j){ \
+            if(predicate(*(type*)ListGet(list, i) , *(type*)ListGet(list, j))){ \
+                type temp = *(type*)ListGet(list, i);\
+                *(type*)ListGet(list, i) = *(type*)ListGet(list, j); \
+                *(type*)ListGet(list, j) = temp; \
+            } \
+        } \
+    } \
+} \
 
 

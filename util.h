@@ -11,6 +11,8 @@ size_t improved_getline(char** linep, size_t* capacity);
 
 int GetInt(size_t* len);
 
+float GetFloat(size_t* len);
+
 bool isNumber(const char* string);
 
 char getCharDeluxe();
