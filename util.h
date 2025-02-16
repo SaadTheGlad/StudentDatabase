@@ -21,6 +21,8 @@ int WordCount(char* line);
 
 int myStrLen(const char* string);
 
+int strcmp_ignorecase(const char* a, const char* b);
+
 double Factorial(int n);
 
 #endif // HELPER

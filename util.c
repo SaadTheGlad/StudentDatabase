@@ -191,6 +191,15 @@ int myStrLen(const char *string){
     return length - 1;
 }
 
+int strcmp_ignorecase(const char* a, const char* b)
+{
+    printf("A: %s. B: %s.\n", a, b);
+    for (; *a; ++a, ++b) {
+        if (tolower(*a) != tolower(*b)) break;
+    }
+    return *a - *b;
+}
+
 double Factorial(int n){
     double total = 1;
     for(int i = 0; i < n; ++i)

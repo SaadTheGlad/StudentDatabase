@@ -4,6 +4,7 @@
 #include "subject.h"
 #include "util.h"
 #include <string.h>
+#include <ctype.h>
 #include "sorting.h"
 
 Student StudentCreate(int ID, const char* firstName, const char* lastName,
@@ -104,6 +105,9 @@ Student StudentPromptAndCreate(List* IDList){
     } while (true);
 
     student.firstName = strdup(line);
+    for(int i = 0; i < strlen(student.firstName); ++i){
+        student.firstName[i] = tolower(student.firstName[i]);
+    }
 
     do {
         puts("Enter the last name: ");
@@ -111,6 +115,9 @@ Student StudentPromptAndCreate(List* IDList){
     } while (true);
 
     student.lastName = strdup(line);
+    for(int i = 0; i < strlen(student.lastName); ++i){
+        student.lastName[i] = tolower(student.lastName[i]);
+    }
 
     int totalNameLen = strlen(student.firstName) + strlen(student.lastName);
     student.fullName = malloc((totalNameLen + 1) * sizeof(char));

@@ -27,8 +27,11 @@ int CommandToInt(const char* command){
         return 3;
     }else if(strcmp(command, "edit") == 0){
         return 4;
-    }else if(strcmp(command, "quit") == 0){
+    }else if(strcmp(command, "help") == 0){
         return 5;
+    }
+    else if(strcmp(command, "quit") == 0){
+        return 6;
     }else{
         return -1;
     }
@@ -55,6 +58,17 @@ bool LargestToSmallest(int a, int b){
     else return false;
 }
 
+void PrintCommands(){
+    puts("\nCommand list: ");
+    puts("->list");
+    puts("->get");
+    puts("->add");
+    puts("->delete");
+    puts("->edit");
+    puts("->help");
+    puts("->quit");
+}
+
 int ThisShitsWayTooLongBro(){
     DataBase database = DataBaseCreate();
 
@@ -63,12 +77,7 @@ int ThisShitsWayTooLongBro(){
     int enteredID = 0;
     int studentIndex = -1;
     puts("Please enter a command: ");
-    puts("->list");
-    puts("->get");
-    puts("->add");
-    puts("->delete");
-    puts("->edit");
-    puts("->quit");
+    PrintCommands();
 
 
     Student saad = {
@@ -119,6 +128,7 @@ int ThisShitsWayTooLongBro(){
             StudentSortID(&database.students, SmallestToLargest);
             if(!StudentsList(&database.students)){
                 puts("No students in database.");
+                break;
             }
             puts("Sort alphabetically? (Y/N)");
             char* line = NULL;
@@ -167,9 +177,9 @@ int ThisShitsWayTooLongBro(){
                     puts("Are you sure? (Y/N)");
                     len = improved_getline(&line, &capacity);
                     if (len == 1 && (line[0] == 'Y' || line[0] == 'y')){
+                        printf("Student with ID %d has been removed.\n", removedStudent->ID);
                         ListRemoveAt(&database.students, studentIndex);   
                         ListRemove(&database.IDs, removedStudent->ID, int);
-                        printf("Student with ID %d has been removed.\n", removedStudent->ID);
                         break;
                     }else if(len == 1 && (line[0] == 'N' || line[0] == 'n')){
                         break;
@@ -339,6 +349,9 @@ int ThisShitsWayTooLongBro(){
             }
             break;
         case 5:
+            PrintCommands();
+            break;
+        case 6:
             //Quitting
             puts("Quitting...");
             return 0;
@@ -351,18 +364,8 @@ int ThisShitsWayTooLongBro(){
 }
 
 int main(){
-    puts("Starting program...");
+    puts("Welcome to a student database managing program.");
     return ThisShitsWayTooLongBro();
-
-
-    // int T[12] = {3,4,5,1,7,8,6,5,9,8,12,9};
-    
-    // SortSelection(T, 12);
-
-    // printf("[");
-    // for(int i = 0; i < 12; ++i){
-    //     printf("%d%s", T[i], i == 11 ? "]\n" : ",");
-    // }
 
     return 0;
 
